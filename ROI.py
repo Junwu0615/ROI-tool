@@ -7,7 +7,7 @@ dead = 100 #想活到幾歲
 money_month = 15000 #每月能投入股市資金
 ROI = 15 #投資報酬率
 object_num = 30000000 #預期想要達成金額
-money_once = 480000 #一次性金額，如沒填0
+money_once = 0 #一次性金額，如沒填0
 ##
 run = work_year #複利滾的時間，之後退休
 money_year = money_month*12 #每年要投入股市資金
@@ -22,6 +22,23 @@ print("==============================================")
 print("複利效應是你的好朋友")
 print("==============================================")
 
+def change(num):
+        def strofsize(num, level):
+            if level >= 2:
+                return num, level
+            elif num >= 10000:
+                num /= 10000
+                level += 1
+                return strofsize(num, level)
+            else:
+                return num, level
+        units = ['','萬','億']
+        num, level = strofsize(num, 0)
+        if level > len(units):
+            level -= 1
+            
+        return '{}{}'.format(round(num, 2), units[level])
+    
 print("投資報酬率: " + str(ROI) + "%")
 print("期望工作" + str(work_year)+ "年後，就退休")
 print("每月能存多少，並投入股市資金: " + str(change(money_month))+ " (NTD)")
@@ -43,24 +60,6 @@ ALL_money_year = [money_sum]
 
 while count_year <= run+1:
     
-    def change(num):
-        def strofsize(num, level):
-            if level >= 2:
-                return num, level
-            elif num >= 10000:
-                num /= 10000
-                level += 1
-                return strofsize(num, level)
-            else:
-                return num, level
-        units = ['','萬','億']
-        num, level = strofsize(num, 0)
-        if level > len(units):
-            level -= 1
-            
-        return '{}{}'.format(round(num, 4), units[level])
-            
-        
     def Interest(now_year):
         interest = now_year * (ROI*0.01) #報酬
         return interest
@@ -87,9 +86,8 @@ while count_year <= run+1:
     
     now_cost = (money_year*count_year) + money_once
 
-    print("* 到目前為止投入成本有: %s" %now_cost)
-    calculate = ALL_money_year[-2]-now_cost
-    print("* 到目前為止獲得報酬有: %s" %change(calculate))
+    print("* 到目前為止投入成本有: %s" %change(now_cost))
+    print("* 到目前為止獲得報酬有: %s" %change(ALL_money_year[-2]-now_cost))
     print("* 投資報酬率%s" %ROI+"%")
     
     if year == break_year:
