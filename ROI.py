@@ -48,7 +48,7 @@ def png(year_type, value_1, value_2, value_3):
         plt.plot(df_2[year_type], df_2[value_2])
         plt.legend([value_1, value_2], loc="upper left")
     plt.title(value_3)
-    plt.savefig(value_3 + ".png")
+    plt.savefig("result/"+ value_3 + ".png")
     plt.clf()
 
 
@@ -217,9 +217,5 @@ if __name__ == '__main__':
 
     png("工作年", "累積總資金", "無", "工作年-每年定存再投入之總資金成長走勢")
     png("休息年", "提領出來", "每年退休後被動收入", "休息年-每年退休後被動收入&提領出來之成")
-
-    #x = [1000, 0.1, 1, 10, 100]
-    #y = [2, 1, 6, 4, 8]
-
     #path = matplotlib.matplotlib_fname()
     #print(path)
