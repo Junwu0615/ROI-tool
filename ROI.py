@@ -37,7 +37,21 @@ def Now_year_ROI(now_year):
 
 def png(year_type, value_1, value_2, value_3):
     plt.xlabel("歲數")
-    plt.ylabel("萬")
+    if value_1 == "累積總資金":
+        check = data[2][-1] # 累積總資金
+    else:
+        check = data[4][-1] # 提領出來
+
+    if 1000000000 > check > 100000000:
+        plt.ylabel("億")
+    elif 10000000000 > check > 1000000000:
+        plt.ylabel("十億")
+    elif 100000000000 > check > 10000000000:
+        plt.ylabel("百億")
+    elif check > 100000000000:
+        plt.ylabel("千億")
+    else:
+        plt.ylabel("萬")
     plt.rcParams['font.sans-serif'] = ['Taipei Sans TC Beta']
     plt.grid(True)
     if year_type == "工作年":
@@ -212,10 +226,10 @@ if __name__ == '__main__':
     # 生成走勢圖
     df_1 = pd.DataFrame({"工作年": data[0], "累積總資金": data[2]})
     df_2 = pd.DataFrame({"休息年": data[1], "每年退休後被動收入": data[3], "提領出來": data[4]})
-    # print(df_1)
-    #print(df_2)
+    print(df_1)
+    print(df_2)
 
     png("工作年", "累積總資金", "無", "工作年-每年定存再投入之總資金成長走勢")
-    png("休息年", "提領出來", "每年退休後被動收入", "休息年-每年退休後被動收入&提領出來之成長走勢")
+    png("休息年", "提領出來", "每年退休後被動收入", "休息年-每年退休後之被動收入&提領出來之成長走勢")
     #path = matplotlib.matplotlib_fname()
     #print(path)
