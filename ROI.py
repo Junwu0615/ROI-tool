@@ -228,11 +228,11 @@ def pic (year, value_1, value_2, value_3):
     plt.rcParams['font.sans-serif'] = ['Taipei Sans TC Beta']
     plt.grid(True)    # 是否有網格?
     if year == "工作年":
-        plt.plot(df_1["工作年"], df_1[value_1])
+        plt.plot(df_1[year], df_1[value_1])
         plt.legend([value_1], loc="upper left")
     else:
-        plt.plot(df_2["休息年"], df_2[value_1])
-        plt.plot(df_2["休息年"], df_2[value_2])
+        plt.plot(df_2[year], df_2[value_1])
+        plt.plot(df_2[year], df_2[value_2])
         plt.legend([value_1, value_2], loc="upper left")
     
     plt.title(value_3)
