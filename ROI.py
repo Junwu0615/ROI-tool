@@ -1,7 +1,11 @@
 import sys
 import os
 from Hyperparameters import hyperparameters
-
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+#import matplotlib.font_manager
+import matplotlib
 
 work_year = 34 #只想要工作多久
 year = 26 #年齡
@@ -21,13 +25,10 @@ isExists_file = os.path.exists('./result')
 
 if not isExists_file:
     os.makedirs('./result')
-    result_txt = open('result/ROI_result.txt','a')
-    result_txt.truncate(0)
-    sys.stdout = result_txt
-else:
-    result_txt = open('result/ROI_result.txt','a')
-    result_txt.truncate(0)
-    sys.stdout = result_txt
+
+result_txt = open('result/ROI_result.txt','a')
+result_txt.truncate(0)
+sys.stdout = result_txt
     
 print("==============================================")
 print("複利效應是你的好朋友")
@@ -50,6 +51,14 @@ def change(num):
             
         return '{}{}'.format(round(num, 2), units[level])
     
+def Interest(now_year):
+        interest = now_year * (ROI*0.01) #報酬
+        return interest
+    
+def Now_year_ROI(now_year):
+    now_year_ROI = now_year + Interest(now_year) #今年投資金+ROI
+    return now_year_ROI
+    
 print("投資報酬率: " + str(ROI) + "%")
 print("期望工作" + str(work_year)+ "年後，就退休")
 print("每月能存多少，並投入股市資金: " + str(change(money_month))+ " (NTD)")
@@ -69,25 +78,19 @@ record_y_2_count = 0
 money_sum = money_year + money_once
 ALL_money_year = [money_sum]
 
+#生成走勢圖
+data = [[],[],[],[],[]]
+
+
 while count_year <= run+1:
-    
-    def Interest(now_year):
-        interest = now_year * (ROI*0.01) #報酬
-        return interest
-    
-    def Now_year_ROI(now_year):
-        now_year_ROI = now_year + Interest(now_year) #今年投資金+ROI
-        return now_year_ROI
     
     if count_year == 1:
         money_sum = now_year + money_once
-        now_year_ROI = Now_year_ROI(money_sum)
-        now_year_ROI = now_year_ROI + money_year
-        interest = Interest(money_sum)
-    else:
-        now_year_ROI = Now_year_ROI(now_year)
-        now_year_ROI = now_year_ROI + money_year
-        interest = Interest(now_year)
+        now_year = money_sum
+        
+    now_year_ROI = Now_year_ROI(now_year)
+    now_year_ROI = now_year_ROI + money_year
+    interest = Interest(now_year)
         
     now_year = now_year_ROI
     #print(now_year_ROI)
@@ -107,6 +110,8 @@ while count_year <= run+1:
         print("* 今年%s歲" %year)
     print()
     
+    data[0].append(year)
+    
     if count_year == 1:
         money_sum = money_year + money_once
         print("  第"+str(count_year)+"年  投資金額有: %s" % change(money_sum))
@@ -123,7 +128,8 @@ while count_year <= run+1:
         print("   -到目前為止，累積總資金約 %s" % change(ALL_money_year[-2]))
         print()
     year += 1
-
+    data[2].append(ALL_money_year[-2])
+    
     #print(ALL_money_year)
     
     interest_each_year.append(interest) #每年利息報酬率，計入
@@ -182,6 +188,9 @@ for b_life in range(1,break_life+1):
         print("### 還能活%s年，換算...每年能花 %s元 / 每月能花 %s元 / 每日能花 %s元 ###" 
               %( change(break_life), change(ALL_money_year[-2]/break_life),
                  change(ALL_money_year[-2]/break_life/12), change(ALL_money_year[-2]/break_life/12/30)))
+        
+        data[3].append(interest_each_year[-2])
+        data[4].append(ALL_money_year[-2])
     else:
         print("* 今年%s歲" %year)
         print("資金運用之方案一: 被動收入")
@@ -195,8 +204,40 @@ for b_life in range(1,break_life+1):
         print("### 還能活%s年，換算...每年能花 %s元 / 每月能花 %s元 / 每日能花 %s元 ###" 
               %( change(break_life), change(ALL_money_year[-1]/break_life),
                  change(ALL_money_year[-1]/break_life/12), change(ALL_money_year[-1]/break_life/12/30)))
+        
+        data[3].append(interest_each_year[-2])
+        data[4].append(ALL_money_year[-1])
 
     
     break_life -= 1
     year += 1
+    
+    data[1].append(year)
     print("==============================================")
+
+
+#生成走勢圖   
+df_1=pd.DataFrame({"工作年":data[0], "累積總資金":data[2]})
+df_2=pd.DataFrame({"休息年":data[1], "每年退休後被動收入":data[3], "提領出來":data[4]})
+#print(df_1)
+#print(df_2)
+
+def pic (year, value_1, value_2, value_3):
+    plt.xlabel("歲數")    # x軸標籤
+    plt.ylabel("億元")    # y軸標籤
+    plt.rcParams['font.sans-serif'] = ['Taipei Sans TC Beta']
+    plt.grid(True)    # 是否有網格?
+    if year == "工作年":
+        plt.plot(df_1["工作年"], df_1[value_1])
+        plt.legend([value_1], loc="upper left")
+    else:
+        plt.plot(df_2["休息年"], df_2[value_1])
+        plt.plot(df_2["休息年"], df_2[value_2])
+        plt.legend([value_1, value_2], loc="upper left")
+    
+    plt.title(value_3)
+    plt.savefig(value_3+".png")
+    plt.clf()
+
+pic("工作年","累積總資金", "無", "工作年-每年定存再投入之總資金成長走勢")
+pic("休息年","提領出來", "每年退休後被動收入", "休息年-每年退休後被動收入&提領出來之成長走勢")

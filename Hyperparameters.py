@@ -1,6 +1,5 @@
 ##超參數
 class hyperparameters:
-    
     work_year = 34 #只想要工作多久
     year = 26 #年齡
     dead = 100 #想活到幾歲
