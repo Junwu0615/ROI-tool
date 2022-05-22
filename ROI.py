@@ -213,9 +213,9 @@ if __name__ == '__main__':
     df_1 = pd.DataFrame({"工作年": data[0], "累積總資金": data[2]})
     df_2 = pd.DataFrame({"休息年": data[1], "每年退休後被動收入": data[3], "提領出來": data[4]})
     # print(df_1)
-    print(df_2)
+    #print(df_2)
 
     png("工作年", "累積總資金", "無", "工作年-每年定存再投入之總資金成長走勢")
-    png("休息年", "提領出來", "每年退休後被動收入", "休息年-每年退休後被動收入&提領出來之成")
+    png("休息年", "提領出來", "每年退休後被動收入", "休息年-每年退休後被動收入&提領出來之成長走勢")
     #path = matplotlib.matplotlib_fname()
     #print(path)
