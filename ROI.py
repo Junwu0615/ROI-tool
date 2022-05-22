@@ -1,8 +1,9 @@
 import sys
 import os
-from Hyperparameters import hyperparameters
+from Hyper_parameters import hyper_parameters
 import pandas as pd
 import matplotlib.pyplot as plt
+#import matplotlib.font_manager
 
 
 def strofsize(num, level):
@@ -21,7 +22,6 @@ def change(num):
     num, level = strofsize(num, 0)
     if level > len(units):
         level -= 1
-
     return '{}{}'.format(round(num, 2), units[level])
 
 
@@ -35,19 +35,18 @@ def Now_year_ROI(now_year):
     return now_year_ROI
 
 
-def png(year, value_1, value_2, value_3):
-    plt.xlabel("歲數")  # x軸標籤
-    plt.ylabel("億元")  # y軸標籤
-    #plt.rcParams['font.sans-serif'] = ['Taipei Sans TC Beta']
-    plt.grid(True)  # 是否有網格?
-    if year == "工作年":
-        plt.plot(df_1[year], df_1[value_1])
+def png(year_type, value_1, value_2, value_3):
+    plt.xlabel("歲數")
+    plt.ylabel("萬")
+    plt.rcParams['font.sans-serif'] = ['Taipei Sans TC Beta']
+    plt.grid(True)
+    if year_type == "工作年":
+        plt.plot(df_1[year_type], df_1[value_1])
         plt.legend([value_1], loc="upper left")
     else:
-        plt.plot(df_2[year], df_2[value_1])
-        plt.plot(df_2[year], df_2[value_2])
+        plt.plot(df_2[year_type], df_2[value_1])
+        plt.plot(df_2[year_type], df_2[value_2])
         plt.legend([value_1, value_2], loc="upper left")
-
     plt.title(value_3)
     plt.savefig(value_3 + ".png")
     plt.clf()
@@ -55,13 +54,13 @@ def png(year, value_1, value_2, value_3):
 
 if __name__ == '__main__':
 
-    work_year = hyperparameters.work_year  # 只想要工作多久
-    year = hyperparameters.year  # 年齡
-    dead = hyperparameters.dead  # 想活到幾歲
-    money_month = hyperparameters.money_month  # 每月能投入股市資金
-    ROI = hyperparameters.ROI  # 投資報酬率
-    object_num = hyperparameters.object_num  # 預期想要達成金額
-    money_once = hyperparameters.money_once  # 一次性金額，如沒填0
+    work_year = hyper_parameters.work_year  # 只想要工作多久
+    year = hyper_parameters.year  # 年齡
+    dead = hyper_parameters.dead  # 想活到幾歲
+    money_month = hyper_parameters.money_month  # 每月能投入股市資金
+    ROI = hyper_parameters.ROI  # 投資報酬率
+    object_num = hyper_parameters.object_num  # 預期想要達成金額
+    money_once = hyper_parameters.money_once  # 一次性金額，如沒填0
     money_year = money_month * 12  # 每年要投入股市資金
     break_life = dead - (year + work_year)  # 退休還能活幾年
 
@@ -83,7 +82,7 @@ if __name__ == '__main__':
     print("預期活到: " + str(dead) + "歲")
     print(str(year) + "歲開始工作至老死，剩餘壽命尚有: " + str(dead - year) + "年")
     print("最終期望達成金額: " + str(change(object_num)) + " (NTD)")
-    print("\n")
+    print()
     print("==============================================")
 
     now_year = money_year
@@ -177,15 +176,16 @@ if __name__ == '__main__':
             ALL_money_year.append(now_year)
             interest_each_year.append(interest)
 
+        print("* 今年%s歲" % year)
+        print("資金運用之方案一: 被動收入")
+        print("### 退休後，被動收入經換算後...每年 %s / 每月 %s / 每天 %s ###"
+              % (change(interest_each_year[-2]), change(interest_each_year[-2] / 12),
+                 change(interest_each_year[-2] / 12 / 30)))
+        print("### 如果只領利息，不賣本，前提是ROI還是穩定維持下去 ###")
+        print()
+        print("資金運用之方案二: 提領出來")
+
         if b_life == 1:
-            print("* 今年%s歲" % year)
-            print("資金運用之方案一: 被動收入")
-            print("### 退休後，被動收入經換算後...每年 %s / 每月 %s / 每天 %s ###"
-                  % (change(interest_each_year[-2]), change(interest_each_year[-2] / 12),
-                     change(interest_each_year[-2] / 12 / 30)))
-            print("### 如果只領利息，不賣本，前提是ROI還是穩定維持下去 ###")
-            print()
-            print("資金運用之方案二: 提領出來")
             print("### 而一次提領約有: %s ###"
                   % (change(ALL_money_year[-2])))
             print("### 還能活%s年，換算...每年能花 %s元 / 每月能花 %s元 / 每日能花 %s元 ###"
@@ -195,14 +195,6 @@ if __name__ == '__main__':
             data[3].append(interest_each_year[-2])
             data[4].append(ALL_money_year[-2])
         else:
-            print("* 今年%s歲" % year)
-            print("資金運用之方案一: 被動收入")
-            print("### 退休後，被動收入經換算後...每年 %s / 每月 %s / 每天 %s ###"
-                  % (change(interest_each_year[-2]), change(interest_each_year[-2] / 12),
-                     change(interest_each_year[-2] / 12 / 30)))
-            print("### 如果只領利息，不賣本，前提是ROI還是穩定維持下去 ###")
-            print()
-            print("資金運用之方案二: 提領出來")
             print("### 而一次提領約有: %s ###"
                   % (change(ALL_money_year[-1])))
             print("### 還能活%s年，換算...每年能花 %s元 / 每月能花 %s元 / 每日能花 %s元 ###"
@@ -212,17 +204,22 @@ if __name__ == '__main__':
             data[3].append(interest_each_year[-2])
             data[4].append(ALL_money_year[-1])
 
+        data[1].append(year)
         break_life -= 1
         year += 1
-
-        data[1].append(year)
         print("==============================================")
 
     # 生成走勢圖
     df_1 = pd.DataFrame({"工作年": data[0], "累積總資金": data[2]})
     df_2 = pd.DataFrame({"休息年": data[1], "每年退休後被動收入": data[3], "提領出來": data[4]})
     # print(df_1)
-    # print(df_2)
+    print(df_2)
 
     png("工作年", "累積總資金", "無", "工作年-每年定存再投入之總資金成長走勢")
     png("休息年", "提領出來", "每年退休後被動收入", "休息年-每年退休後被動收入&提領出來之成")
+
+    #x = [1000, 0.1, 1, 10, 100]
+    #y = [2, 1, 6, 4, 8]
+
+    #path = matplotlib.matplotlib_fname()
+    #print(path)
