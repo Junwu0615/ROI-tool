@@ -1,6 +1,8 @@
 import sys
+import os
+from Hyperparameters import hyperparameters
 
-##超參數
+
 work_year = 34 #只想要工作多久
 year = 26 #年齡
 dead = 100 #想活到幾歲
@@ -15,9 +17,18 @@ alive = dead-year #還可以活多久
 break_year = year + work_year #退休年
 break_life = dead - (year + work_year) #退休還能活幾年
 
-result_txt = open('result/ROI_result.txt','a')
-result_txt.truncate(0)
-sys.stdout = result_txt
+isExists_file = os.path.exists('./result')
+
+if not isExists_file:
+    os.makedirs('./result')
+    result_txt = open('result/ROI_result.txt','a')
+    result_txt.truncate(0)
+    sys.stdout = result_txt
+else:
+    result_txt = open('result/ROI_result.txt','a')
+    result_txt.truncate(0)
+    sys.stdout = result_txt
+    
 print("==============================================")
 print("複利效應是你的好朋友")
 print("==============================================")
