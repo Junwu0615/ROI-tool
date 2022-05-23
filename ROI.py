@@ -77,27 +77,28 @@ if __name__ == '__main__':
     money_once = hyper_parameters.money_once  # 一次性金額，如沒填0
     money_year = money_month * 12  # 每年要投入股市資金
     break_life = dead - (year + work_year)  # 退休還能活幾年
-
+    
+    print("START: 開始做ROI計算...")
+    #控制權限轉移
+    back_power = sys.stdout
     isExists_file = os.path.exists('./result')
     if not isExists_file:
-        os.makedirs('./result')
-    result_txt = open('result/ROI_result.txt', 'a')
-    result_txt.truncate(0)
-    sys.stdout = result_txt
+        os.makedirs('./result') 
+    sys.stdout = open('result/ROI_result.txt', 'w', encoding = "utf-8")
 
-    print("==============================================")
+    print("======================================")
     print("複利效應是你的好朋友")
-    print("==============================================")
+    print("======================================")
     print("投資報酬率: " + str(ROI) + "%")
     print("期望工作" + str(work_year) + "年後，就退休")
-    print("每月能存多少，並投入股市資金: " + str(change(money_month)) + " (NTD)")
-    print("到年底，總共要投入股市資金: " + str(change(money_year)) + " (NTD)")
-    print("第一次投入股市，額外加碼: " + str(change(money_once)) + " (NTD)")
+    print("每月能存多少，並投入股市資金: " + str(change(money_month)))
+    print("到年底，總共要投入股市資金: " + str(change(money_year)))
+    print("第一次投入股市，額外加碼: " + str(change(money_once)))
     print("預期活到: " + str(dead) + "歲")
     print(str(year) + "歲開始工作至老死，剩餘壽命尚有: " + str(dead - year) + "年")
-    print("最終期望達成金額: " + str(change(object_num)) + " (NTD)")
+    print("最終期望達成金額: " + str(change(object_num)))
     print()
-    print("==============================================")
+    print("======================================")
 
     now_year = money_year
     interest_each_year = []
@@ -174,13 +175,13 @@ if __name__ == '__main__':
             print("### 第" + str(record_y_2) + "年，達成當初所設立的目標金額: " + str(object_num) + " ###")
 
         count_year += 1
-        print("==============================================")
+        print("======================================")
 
     year -= 1  # 年齡數字校正
 
     # 當退休後，計算被動收入
     for b_life in range(1, break_life + 1):
-        print("==============================================")
+        print()
 
         if b_life == 1:
             now_year = ALL_money_year[-2]
@@ -221,15 +222,21 @@ if __name__ == '__main__':
         data[1].append(year)
         break_life -= 1
         year += 1
-        print("==============================================")
+        print()
+        print("======================================")
 
     # 生成走勢圖
     df_1 = pd.DataFrame({"工作年": data[0], "累積總資金": data[2]})
     df_2 = pd.DataFrame({"休息年": data[1], "每年退休後被動收入": data[3], "提領出來": data[4]})
     print(df_1)
+    print("======================================")
     print(df_2)
 
     png("工作年", "累積總資金", "無", "工作年-每年定存再投入之總資金成長走勢")
     png("休息年", "提領出來", "每年退休後被動收入", "休息年-每年退休後之被動收入&提領出來之成長走勢")
-    #path = matplotlib.matplotlib_fname()
-    #print(path)
+    
+    sys.stdout.close()
+    #控制權限返回
+    sys.stdout = back_power
+    print("END: 結束編輯並輸出完成 !")
+    
